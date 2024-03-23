@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -126,6 +128,22 @@ public class HttpTask extends WorkflowSystemTask {
                 task.addOutput("response", response.asMap());
             }
 
+        } catch (HttpClientErrorException ex) {
+            LOGGER.error(
+                    "Failed to invoke {} task: {} - uri: {}, vipAddress: {} in workflow: {}",
+                    getTaskType(),
+                    task.getTaskId(),
+                    input.getUri(),
+                    input.getVipAddress(),
+                    task.getWorkflowInstanceId(),
+                    ex);
+            String reason = ex.getLocalizedMessage();
+            LOGGER.error(reason, ex);
+            // since 4xx, is client side issue there is no point in retrying
+            task.setStatus(TaskModel.Status.FAILED_WITH_TERMINAL_ERROR);
+            task.setReasonForIncompletion(
+                    "Failed to invoke " + getTaskType() + " task due to: " + ex);
+            task.addOutput("response", ex.toString());
         } catch (Exception e) {
             LOGGER.error(
                     "Failed to invoke {} task: {} - uri: {}, vipAddress: {} in workflow: {}",
@@ -181,6 +199,24 @@ public class HttpTask extends WorkflowSystemTask {
                     HttpStatus.valueOf(responseEntity.getStatusCode().value()).getReasonPhrase();
             response.headers = responseEntity.getHeaders();
             return response;
+        } catch (HttpClientErrorException ex) {
+            LOGGER.error(
+                    String.format(
+                            "Got client-side error http response (4xx) - uri: %s, vipAddress: %s",
+                            input.getUri(), input.getVipAddress()),
+                    ex);
+            String reason = ex.getLocalizedMessage();
+            LOGGER.error(reason, ex);
+            throw ex;
+        } catch (HttpServerErrorException ex) {
+            LOGGER.error(
+                    String.format(
+                            "Got server-side error http response (5xx) - uri: %s, vipAddress: %s",
+                            input.getUri(), input.getVipAddress()),
+                    ex);
+            String reason = ex.getLocalizedMessage();
+            LOGGER.error(reason, ex);
+            throw ex;
         } catch (RestClientException ex) {
             LOGGER.error(
                     String.format(
