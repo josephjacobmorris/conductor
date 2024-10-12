@@ -10,11 +10,11 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.conductoross.commands;
+package org.conductoross.cli.commands;
 
 import com.netflix.conductor.client.http.WorkflowClient;
 import com.netflix.conductor.common.run.Workflow;
-import org.conductoross.utils.Formatter;
+import org.conductoross.cli.utils.Formatter;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 
@@ -29,6 +29,7 @@ public class WorkflowCommand {
             alias = {"get-execution", "details"},
             description = "Used to get details of a particular workflow execution")
     public String getWorkflowExecution(
+            //TODO: create a custom annotation for this as it is will be reused a lot in future
             @Option(
                             longNames = {"workflow-id", "id"},
                             shortNames = {'K'},

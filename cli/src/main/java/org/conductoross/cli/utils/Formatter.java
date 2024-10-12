@@ -1,4 +1,4 @@
-package org.conductoross.utils;
+package org.conductoross.cli.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
