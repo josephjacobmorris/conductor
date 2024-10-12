@@ -13,11 +13,24 @@
 package org.conductoross.commands;
 
 import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.Option;
 
-@Command(command = "workflow")
+@Command(
+        command = "workflow",
+        group = "workflow",
+        description = "Commands used to get details, pause, unpause, terminate, re-run etc")
 public class GetWorkflowCommand {
-    @Command(command = "get-workflow-execution")
-    public String getWorkflowExecution() {
+    @Command(
+            command = "get-workflow-execution",
+            alias = {"get-execution", "details"},
+            description = "Used to get details of a particular workflow execution")
+    public String getWorkflowExecution(
+            @Option(
+                            longNames = {"workflow-id", "id"},
+                            shortNames = {'K'},
+                            label = "workflowId",
+                            required = true)
+                    String workflowId) {
         // TODO add call to conductor and then format
         return "workflowId";
     }
