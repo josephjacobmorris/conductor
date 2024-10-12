@@ -17,6 +17,7 @@ import org.springframework.shell.command.annotation.Option;
 
 @Command(
         command = "workflow",
+        alias = {"workflow"},
         group = "workflow",
         description = "Commands used to get details, pause, unpause, terminate, re-run etc")
 public class GetWorkflowCommand {
@@ -32,6 +33,6 @@ public class GetWorkflowCommand {
                             required = true)
                     String workflowId) {
         // TODO add call to conductor and then format
-        return "workflowId";
+        return "workflowId: " + workflowId;
     }
 }
