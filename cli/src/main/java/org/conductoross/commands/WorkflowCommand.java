@@ -12,15 +12,18 @@
  */
 package org.conductoross.commands;
 
+import com.netflix.conductor.client.http.WorkflowClient;
+import com.netflix.conductor.common.run.Workflow;
+import org.conductoross.utils.Formatter;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 
 @Command(
         command = "workflow",
-        alias = {"workflow"},
+        alias = "workflow",
         group = "workflow",
         description = "Commands used to get details, pause, unpause, terminate, re-run etc")
-public class GetWorkflowCommand {
+public class WorkflowCommand {
     @Command(
             command = "get-workflow-execution",
             alias = {"get-execution", "details"},
@@ -31,8 +34,19 @@ public class GetWorkflowCommand {
                             shortNames = {'K'},
                             label = "workflowId",
                             required = true)
-                    String workflowId) {
-        // TODO add call to conductor and then format
-        return "workflowId: " + workflowId;
+                    String workflowId,
+            //TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option( longNames = {"server-uri","uri"},
+                    label = "ServerURI",
+                    defaultValue = "http://localhost:5000/"
+            ) String serverURI
+            ) {
+        // TODO check if client can be reused instead of creating for each command
+        WorkflowClient client = new WorkflowClient();
+        client.setRootURI(serverURI);
+
+        // TODO add option for verbosity
+        Workflow workflow = client.getWorkflow(workflowId, false);
+        return Formatter.printDefault(workflow);
     }
 }
