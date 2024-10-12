@@ -12,10 +12,14 @@
  */
 package org.conductoross;
 
-import org.apache.catalina.startup.Bootstrap;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.shell.command.annotation.CommandScan;
 
+@CommandScan
+@SpringBootApplication
 public class ConductorCLIApplication {
     public static void main(String[] args) {
-        Bootstrap.main(args);
+        SpringApplication.run(ConductorCLIApplication.class, args);
     }
 }
