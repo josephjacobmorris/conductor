@@ -8,6 +8,7 @@ ext {
 
 dependencies {
     implementation 'org.springframework.shell:spring-shell-starter'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${revFasterXml}'
     implementation project(':conductor-common')
     implementation project(':conductor-client')
 }

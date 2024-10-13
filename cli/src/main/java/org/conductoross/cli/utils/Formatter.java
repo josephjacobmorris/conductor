@@ -12,33 +12,22 @@
  */
 package org.conductoross.cli.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 public class Formatter {
-    public static String printAsYaml(Object object) {
+    public static String printAsYaml(Object object, boolean ignoreNulls) {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.convertValue(object, JsonNode.class);
+        JsonNode jsonNode = mapper.convertValue(object, JsonNode.class);
         StringBuilder sb = new StringBuilder();
-        printJsonNode(rootNode, "", sb);
-        return sb.toString();
-    }
-
-    private static void printJsonNode(JsonNode node, String indent, StringBuilder sb) {
-        if (node.isObject()) {
-            node.fieldNames()
-                    .forEachRemaining(
-                            fieldName -> {
-                                sb.append(indent + fieldName + ": ");
-                                printJsonNode(node.get(fieldName), indent + "  ", sb);
-                            });
-        } else if (node.isArray()) {
-
-            for (JsonNode element : node) {
-                printJsonNode(element, indent, sb);
-            }
-        } else {
-            sb.append(node.asText() + System.lineSeparator());
+        String jsonAsYaml = null;
+        try {
+            jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
+        return jsonAsYaml;
     }
 }

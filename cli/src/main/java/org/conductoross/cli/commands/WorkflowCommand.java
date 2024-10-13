@@ -24,6 +24,7 @@ import com.netflix.conductor.client.exception.ConductorClientException;
 import com.netflix.conductor.client.http.WorkflowClient;
 import com.netflix.conductor.common.run.Workflow;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 
 @Command(
@@ -46,19 +47,28 @@ public class WorkflowCommand {
                             shortNames = {'K'},
                             label = "workflowId",
                             required = true)
+                    @Pattern(
+                            regexp =
+                                    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
+                            message = "workflowId must be in uuid format")
                     String workflowId,
             // TODO: create a custom annotation for this as it is will be reused a lot in future
             @Option(
                             longNames = {"server-uri", "uri"},
                             label = "ServerURI",
                             defaultValue = "http://localhost:8080/")
-                    String serverURI) {
+                    String serverURI,
+            @Option(
+                            longNames = {"ignore-nulls"},
+                            label = "IgnoreNulls",
+                            defaultValue = "true")
+                    boolean ignoreNulls) {
         // TODO check if client can be reused instead of creating for each command
         WorkflowClient client = new WorkflowClient();
         client.setRootURI(serverURI);
         // TODO add option for verbosity and let it decide to include tasks or not
         Workflow workflow = client.getWorkflow(workflowId, false);
-        return Formatter.printAsYaml(workflow);
+        return Formatter.printAsYaml(workflow, ignoreNulls);
     }
 
     @ExceptionResolver
