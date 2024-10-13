@@ -12,42 +12,64 @@
  */
 package org.conductoross.cli.commands;
 
+import org.conductoross.cli.utils.Formatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.shell.command.CommandHandlingResult;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.ExceptionResolver;
+import org.springframework.shell.command.annotation.Option;
+
+import com.netflix.conductor.client.exception.ConductorClientException;
 import com.netflix.conductor.client.http.WorkflowClient;
 import com.netflix.conductor.common.run.Workflow;
-import org.conductoross.cli.utils.Formatter;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Command(
         command = "workflow",
         alias = "workflow",
         group = "workflow",
         description = "Commands used to get details, pause, unpause, terminate, re-run etc")
+@Slf4j
 public class WorkflowCommand {
+    private static final Logger log = LoggerFactory.getLogger(WorkflowCommand.class);
+
     @Command(
             command = "get-workflow-execution",
             alias = {"get-execution", "details"},
             description = "Used to get details of a particular workflow execution")
     public String getWorkflowExecution(
-            //TODO: create a custom annotation for this as it is will be reused a lot in future
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
             @Option(
                             longNames = {"workflow-id", "id"},
                             shortNames = {'K'},
                             label = "workflowId",
                             required = true)
                     String workflowId,
-            //TODO: create a custom annotation for this as it is will be reused a lot in future
-            @Option( longNames = {"server-uri","uri"},
-                    label = "ServerURI",
-                    defaultValue = "http://localhost:5000/"
-            ) String serverURI
-            ) {
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "ServerURI",
+                            defaultValue = "http://localhost:8080/")
+                    String serverURI) {
         // TODO check if client can be reused instead of creating for each command
         WorkflowClient client = new WorkflowClient();
         client.setRootURI(serverURI);
-
-        // TODO add option for verbosity
+        // TODO add option for verbosity and let it decide to include tasks or not
         Workflow workflow = client.getWorkflow(workflowId, false);
-        return Formatter.printDefault(workflow);
+        return Formatter.printAsYaml(workflow);
+    }
+
+    @ExceptionResolver
+    CommandHandlingResult conductorClientException(ConductorClientException ex) {
+        return CommandHandlingResult.of(
+                """
+    Error while executing command: %s
+    Suggestions:
+    Check if the provided uri is valid and the conductor server is running
+    """
+                        .formatted(ex.getMessage()),
+                4);
     }
 }
