@@ -19,6 +19,6 @@ dependencyManagement {
 }
 
 bootJar {
-    mainClass = 'org.conductoross.ConductorCLIApplication'
+    mainClass = 'org.conductoross.cli.ConductorCLIApplication'
     archiveClassifier = 'boot'
 }
