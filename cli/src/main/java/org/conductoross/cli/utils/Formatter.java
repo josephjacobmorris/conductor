@@ -21,7 +21,6 @@ public class Formatter {
     public static String printAsYaml(Object object, boolean ignoreNulls) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.convertValue(object, JsonNode.class);
-        StringBuilder sb = new StringBuilder();
         String jsonAsYaml = null;
         try {
             jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
