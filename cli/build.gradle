@@ -6,6 +6,8 @@ ext {
     set('springShellVersion', "3.3.3")
 }
 
+compileJava.inputs.files(processResources)
+
 dependencies {
     implementation 'org.springframework.shell:spring-shell-starter'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${revFasterXml}'
