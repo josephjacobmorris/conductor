@@ -12,7 +12,8 @@
  */
 package org.conductoross.cli.commands;
 
-import org.conductoross.cli.utils.Formatter;
+import org.conductoross.cli.formatters.Formatter;
+import org.conductoross.cli.formatters.FormatterConfig;
 import org.springframework.shell.command.CommandHandlingResult;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.ExceptionResolver;
@@ -33,6 +34,12 @@ import lombok.extern.slf4j.Slf4j;
         description = "Commands used to get details, pause, unpause, terminate, re-run etc")
 @Slf4j
 public class WorkflowCommand {
+    private final Formatter formatter;
+
+    public WorkflowCommand(Formatter formatter) {
+        this.formatter = formatter;
+    }
+
     @Command(
             command = "get-workflow-execution",
             alias = {"get-execution", "details"},
@@ -65,7 +72,7 @@ public class WorkflowCommand {
         client.setRootURI(serverURI);
         // TODO add option for verbosity and let it decide to include tasks or not
         Workflow workflow = client.getWorkflow(workflowId, false);
-        return Formatter.printAsYaml(workflow, ignoreNulls);
+        return formatter.print(workflow, FormatterConfig.builder().ignoreNulls(true).build());
     }
 
     @Command(command = "pause", description = "Used to pause a running workflow")
