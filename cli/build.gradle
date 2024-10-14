@@ -7,6 +7,8 @@ ext {
 }
 
 dependencies {
+    annotationProcessor "org.projectlombok:lombok"
+    compileOnly "org.projectlombok:lombok"
     implementation 'org.springframework.shell:spring-shell-starter'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${revFasterXml}'
     implementation project(':conductor-common')
