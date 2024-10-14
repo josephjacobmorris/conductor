@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Command(
         command = "metadata",
+        alias = "metadata",
         group = "metadata",
         description = "Commands used to define, update, delete workflow/task definitions")
 public class MetadataCommand {
@@ -34,9 +35,9 @@ public class MetadataCommand {
     private final MetadataClient metadataClient;
     private final ObjectMapper objectMapper;
 
-    public MetadataCommand(Formatter formatter, ObjectMapper objectMapper) {
+    public MetadataCommand(Formatter formatter) {
         this.formatter = formatter;
-        this.objectMapper = objectMapper;
+        this.objectMapper = new ObjectMapper();
         this.metadataClient = new MetadataClient();
     }
 

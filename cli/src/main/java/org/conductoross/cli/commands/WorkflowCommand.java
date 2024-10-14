@@ -45,9 +45,9 @@ public class WorkflowCommand {
     private final WorkflowClient workflowClient;
     private final ObjectMapper objectMapper;
 
-    public WorkflowCommand(Formatter formatter, ObjectMapper objectMapper) {
+    public WorkflowCommand(Formatter formatter) {
         this.formatter = formatter;
-        this.objectMapper = objectMapper;
+        this.objectMapper = new ObjectMapper();
         this.workflowClient = new WorkflowClient();
     }
 
