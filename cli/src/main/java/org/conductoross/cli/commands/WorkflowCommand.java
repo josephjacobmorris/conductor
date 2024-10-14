@@ -22,6 +22,7 @@ import org.springframework.shell.command.annotation.Option;
 
 import com.netflix.conductor.client.exception.ConductorClientException;
 import com.netflix.conductor.client.http.WorkflowClient;
+import com.netflix.conductor.common.metadata.workflow.RerunWorkflowRequest;
 import com.netflix.conductor.common.run.Workflow;
 
 import jakarta.validation.constraints.Pattern;
@@ -71,13 +72,154 @@ public class WorkflowCommand {
         return Formatter.printAsYaml(workflow, ignoreNulls);
     }
 
+    @Command(command = "pause", description = "Used to pause a running workflow")
+    public String pauseWorkflowExecution(
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"workflow-id", "id"},
+                            shortNames = {'K'},
+                            label = "workflowId",
+                            required = true)
+                    @Pattern(
+                            regexp =
+                                    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
+                            message = "workflowId must be in uuid format")
+                    String workflowId,
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "ServerURI",
+                            defaultValue = "http://localhost:8080/")
+                    String serverURI) {
+        // TODO check if client can be reused instead of creating for each command
+        WorkflowClient client = new WorkflowClient();
+        client.setRootURI(serverURI);
+        client.pauseWorkflow(workflowId);
+        return "Workflow pause triggered for workflowId : " + workflowId;
+    }
+
+    @Command(
+            command = "unpause",
+            alias = "resume",
+            description = "Used to resume a paused workflow")
+    public String resumeWorkflowExecution(
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"workflow-id", "id"},
+                            shortNames = {'K'},
+                            label = "workflowId",
+                            required = true)
+                    @Pattern(
+                            regexp =
+                                    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
+                            message = "workflowId must be in uuid format")
+                    String workflowId,
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "ServerURI",
+                            defaultValue = "http://localhost:8080/")
+                    String serverURI) {
+        WorkflowClient client = new WorkflowClient();
+        client.setRootURI(serverURI);
+        client.resumeWorkflow(workflowId);
+        return "Workflow resume triggered for workflowId : " + workflowId;
+    }
+
+    @Command(
+            command = "terminate",
+            alias = "stop",
+            description = "Used to terminate a running workflow")
+    public String terminateWorkflowExecution(
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"workflow-id", "id"},
+                            shortNames = {'K'},
+                            label = "workflowId",
+                            required = true)
+                    @Pattern(
+                            regexp =
+                                    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
+                            message = "workflowId must be in uuid format")
+                    String workflowId,
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "ServerURI",
+                            defaultValue = "http://localhost:8080/")
+                    String serverURI,
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "Reason",
+                            description =
+                                    "Describes the reason for terminating for future auditing",
+                            defaultValue = "")
+                    String reason) {
+        WorkflowClient client = new WorkflowClient();
+        client.setRootURI(serverURI);
+        client.terminateWorkflow(workflowId, reason);
+        return "Workflow terminate triggered for workflowId : " + workflowId;
+    }
+
+    @Command(command = "rerun", description = "Used to rerun a terminated/finished workflow")
+    public String rerunWorkflowExecution(
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"workflow-id", "id"},
+                            shortNames = {'K'},
+                            label = "workflowId",
+                            required = true)
+                    @Pattern(
+                            regexp =
+                                    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
+                            message = "workflowId must be in uuid format")
+                    String workflowId,
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "ServerURI",
+                            defaultValue = "http://localhost:8080/")
+                    String serverURI) {
+        WorkflowClient client = new WorkflowClient();
+        RerunWorkflowRequest rerunWorkflowRequest = new RerunWorkflowRequest();
+        rerunWorkflowRequest.setReRunFromWorkflowId(workflowId);
+        client.setRootURI(serverURI);
+        client.rerunWorkflow(workflowId, rerunWorkflowRequest);
+        return "Workflow rerun triggered for workflowId : " + workflowId;
+    }
+
+    @Command(command = "retry", description = "Used to retry from last failed task in  workflow")
+    public String retryWorkflowExecution(
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"workflow-id", "id"},
+                            shortNames = {'K'},
+                            label = "workflowId",
+                            required = true)
+                    @Pattern(
+                            regexp =
+                                    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
+                            message = "workflowId must be in uuid format")
+                    String workflowId,
+            // TODO: create a custom annotation for this as it is will be reused a lot in future
+            @Option(
+                            longNames = {"server-uri", "uri"},
+                            label = "ServerURI",
+                            defaultValue = "http://localhost:8080/")
+                    String serverURI) {
+        WorkflowClient client = new WorkflowClient();
+        client.setRootURI(serverURI);
+        client.retryLastFailedTask(workflowId);
+        return "Workflow retry triggered for workflowId : " + workflowId;
+    }
+
     @ExceptionResolver
     CommandHandlingResult conductorClientException(ConductorClientException ex) {
         return CommandHandlingResult.of(
                 """
     Error while executing command: %s
     Suggestions:
-    Check if the provided uri is valid and the conductor server is running
+    1. Check if the provided uri is valid and the conductor server is running
     """
                         .formatted(ex.getMessage()),
                 4);
