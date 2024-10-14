@@ -13,8 +13,6 @@
 package org.conductoross.cli.commands;
 
 import org.conductoross.cli.utils.Formatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.shell.command.CommandHandlingResult;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.ExceptionResolver;
@@ -35,8 +33,6 @@ import lombok.extern.slf4j.Slf4j;
         description = "Commands used to get details, pause, unpause, terminate, re-run etc")
 @Slf4j
 public class WorkflowCommand {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowCommand.class);
-
     @Command(
             command = "get-workflow-execution",
             alias = {"get-execution", "details"},
