@@ -109,19 +109,6 @@ public class MetadataCommand {
             description = "Create a workflow definition")
     public String defineWorkflowDefinition(
             @Option(
-                            longNames = {"name", "workflowName"},
-                            shortNames = {'n', 'N'},
-                            required = true,
-                            description = "Name of the workflow",
-                            label = "WorkflowName")
-                    String workflowName,
-            @Option(
-                            longNames = {"version"},
-                            shortNames = {'v'},
-                            label = "Version",
-                            required = true)
-                    int version,
-            @Option(
                             longNames = {"file-name"},
                             shortNames = {'f', 'F'},
                             label = "FileName",
