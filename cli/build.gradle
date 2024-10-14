@@ -6,14 +6,6 @@ ext {
     set('springShellVersion', "3.3.3")
 }
 
-tasks.named('compileJava') {
-    mustRunAfter(':cli:processResources')
-}
-
-tasks.named('bootJar') {
-    mustRunAfter(':cli:compileJava')
-}
-
 dependencies {
     implementation 'org.springframework.shell:spring-shell-starter'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${revFasterXml}'
