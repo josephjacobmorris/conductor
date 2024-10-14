@@ -72,7 +72,8 @@ public class WorkflowCommand {
         client.setRootURI(serverURI);
         // TODO add option for verbosity and let it decide to include tasks or not
         Workflow workflow = client.getWorkflow(workflowId, false);
-        return formatter.print(workflow, FormatterConfig.builder().ignoreNulls(true).build());
+        FormatterConfig formatterConfig = FormatterConfig.builder().ignoreNulls(true).build();
+        return formatter.print(workflow, formatterConfig);
     }
 
     @Command(command = "pause", description = "Used to pause a running workflow")
