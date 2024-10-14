@@ -86,7 +86,6 @@ public class WorkflowCommand {
 
     @Command(command = "pause", description = "Used to pause a running workflow")
     public String pauseWorkflowExecution(
-            // TODO: create a custom annotation for this as it is will be reused a lot in future
             @Option(
                             longNames = {"workflow-id", "id"},
                             shortNames = {'K'},
@@ -194,7 +193,6 @@ public class WorkflowCommand {
 
     @Command(command = "retry", description = "Used to retry from last failed task in  workflow")
     public String retryWorkflowExecution(
-            // TODO: create a custom annotation for this as it is will be reused a lot in future
             @Option(
                             longNames = {"workflow-id", "id"},
                             shortNames = {'K'},
@@ -205,7 +203,6 @@ public class WorkflowCommand {
                                     "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$",
                             message = "workflowId must be in uuid format")
                     String workflowId,
-            // TODO: create a custom annotation for this as it is will be reused a lot in future
             @Option(
                             longNames = {"server-uri", "uri"},
                             label = "ServerURI",
